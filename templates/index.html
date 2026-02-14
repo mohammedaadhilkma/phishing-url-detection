@@ -4,67 +4,188 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phishing URL Detector</title>
+    <title>PhishGuard</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: "rgba(255, 255, 255, 0.1)",
+                        glassBorder: "rgba(255, 255, 255, 0.2)",
+                        primary: "#6c5ce7",
+                        secondary: "#a29bfe",
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body>
-    <div class="container">
-        <header>
-            <h1>🛡️ PhishGuard</h1>
-            <p>Advanced AI-Powered Phishing Detection</p>
-        </header>
+<body
+    class="bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 min-h-screen text-white font-sans flex items-center justify-center p-4">
 
-        <main>
-            <div class="glass-panel">
-                <form action="/" method="POST">
-                    <div class="input-group">
-                        <input type="text" name="url" placeholder="Enter URL to analyze (e.g., http://example.com)"
-                            required value="{{ url if url else '' }}">
-                        <button type="submit">Analyze</button>
+    <div class="relative w-full max-w-4xl">
+        <!-- Background Elements -->
+        <div
+            class="absolute -top-20 -left-20 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob">
+        </div>
+        <div
+            class="absolute -bottom-20 -right-20 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000">
+        </div>
+        <div
+            class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000">
+        </div>
+
+        <div
+            class="relative bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl overflow-hidden">
+
+            <!-- Header -->
+            <div class="p-8 text-center border-b border-white/10">
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-tr from-blue-500 to-purple-600 mb-4 shadow-lg shadow-purple-500/30">
+                    <i class="fas fa-shield-alt text-3xl text-white"></i>
+                </div>
+                <h1
+                    class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-purple-200 mb-2">
+                    PhishGuard</h1>
+                <p class="text-blue-200/80 text-lg">Advanced AI-Powered Threat Detection</p>
+            </div>
+
+            <!-- Content -->
+            <div class="p-8 md:p-12">
+                <form action="/" method="POST" class="relative group">
+                    <div
+                        class="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-xl blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt">
+                    </div>
+                    <div class="relative flex items-center bg-gray-900 rounded-xl p-1">
+                        <div class="pl-4 text-gray-400">
+                            <i class="fas fa-link"></i>
+                        </div>
+                        <input type="text" name="url"
+                            class="w-full bg-transparent text-white p-4 focus:outline-none placeholder-gray-500"
+                            placeholder="Paste suspicious URL here (e.g., http://example.com)" required
+                            value="{{ url if url else '' }}" autocomplete="off">
+                        <button type="submit"
+                            class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transform transition hover:scale-105 duration-200 ease-in-out">
+                            Analyze
+                        </button>
                     </div>
                 </form>
 
                 {% if error_message %}
-                <div class="result error">
+                <div
+                    class="mt-8 p-4 rounded-xl bg-red-500/20 border border-red-500/30 text-red-200 flex items-center justify-center gap-3 animate-fade-in-up">
+                    <i class="fas fa-exclamation-circle"></i>
                     <p>{{ error_message }}</p>
                 </div>
                 {% endif %}
 
                 {% if prediction_text %}
-                <div class="result {{ result_class }}">
-                    <h2>{{ prediction_text }}</h2>
-                    {% if confidence %}
-                    <p>Confidence Score: <strong>{{ confidence }}%</strong></p>
-                    <div class="progress-bar">
-                        <div class="progress" style="width: {{ confidence if confidence else 0 }}%;"></div>
-                    </div>
-                    {% endif %}
+                <div class="mt-10 animate-fade-in-up">
+                    <div class="p-6 rounded-2xl border border-white/10 bg-black/20 backdrop-blur-md shadow-inner">
 
-                    {% if advanced_results %}
-                    <div class="advanced-details">
-                        <h3>Detailed Analysis</h3>
-                        <ul>
-                            <li><strong>Domain Age:</strong> {{ advanced_results.domain_age_days }} days (Risk: {{
-                                advanced_results.age_risk }})</li>
-                            <li><strong>SSL Status:</strong> {{ 'Valid' if advanced_results.ssl_valid else 'Invalid' }}
-                                (Expires: {{ advanced_results.ssl_expiry }})</li>
-                            <li><strong>Google Safe Browsing:</strong> {{ advanced_results.safe_browsing_status }}</li>
-                        </ul>
-                    </div>
-                    {% endif %}
+                        <div class="text-center mb-8">
+                            <div
+                                class="inline-block px-4 py-1 rounded-full text-sm font-medium mb-3 {{ 'bg-red-500/20 text-red-300 border-red-500/30' if result_class == 'danger' else 'bg-green-500/20 text-green-300 border-green-500/30' }} border">
+                                {{ 'High Risk Detected' if result_class == 'danger' else 'Safe to Browse' }}
+                            </div>
+                            <h2
+                                class="text-3xl font-bold {{ 'text-red-400' if result_class == 'danger' else 'text-emerald-400' }}">
+                                {{ prediction_text }}
+                            </h2>
+                            <p class="text-white/60 mt-2 text-sm break-all font-mono">{{ url }}</p>
+                        </div>
 
-                    <p class="url-checked">URL: {{ url }}</p>
+                        {% if confidence %}
+                        <div class="mb-8">
+                            <div class="flex justify-between items-end mb-2">
+                                <span class="text-sm font-medium text-gray-300">Confidence Score</span>
+                                <span
+                                    class="text-2xl font-bold {{ 'text-red-400' if result_class == 'danger' else 'text-emerald-400' }}">{{
+                                    confidence }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-700/50 rounded-full h-3 overflow-hidden">
+                                <div class="h-3 rounded-full transition-all duration-1000 ease-out {{ 'bg-gradient-to-r from-red-600 to-orange-500' if result_class == 'danger' else 'bg-gradient-to-r from-emerald-500 to-teal-400' }}"
+                                    style="width: {{ confidence if confidence else 0 }}%">
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if advanced_results %}
+                        <div class="grid md:grid-cols-3 gap-4 mt-6">
+                            <!-- Domain Age -->
+                            <div class="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="p-2 bg-blue-500/20 rounded-lg text-blue-300">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-300">Domain Age</span>
+                                </div>
+                                <p class="text-xl font-semibold">{{ advanced_results.domain_age_days }} <span
+                                        class="text-sm text-gray-400 font-normal">days</span></p>
+                                <p
+                                    class="text-xs mt-1 {{ 'text-red-400' if advanced_results.age_score > 0.5 else 'text-gray-400' }}">
+                                    Risk Level: {{ 'High' if advanced_results.age_score > 0.5 else 'Low' }}
+                                </p>
+                            </div>
+
+                            <!-- SSL Status -->
+                            <div class="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="p-2 bg-purple-500/20 rounded-lg text-purple-300">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-300">SSL Status</span>
+                                </div>
+                                <p
+                                    class="text-xl font-semibold {{ 'text-green-400' if advanced_results.ssl_valid else 'text-red-400' }}">
+                                    {{ 'Valid' if advanced_results.ssl_valid else 'Invalid' }}
+                                </p>
+                                <p class="text-xs text-gray-400 mt-1 truncate">
+                                    Expires: {{ advanced_results.ssl_expiry or 'N/A' }}
+                                </p>
+                            </div>
+
+                            <!-- Google Safe Browsing -->
+                            <div class="bg-white/5 p-4 rounded-xl border border-white/10 hover:bg-white/10 transition">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="p-2 bg-pink-500/20 rounded-lg text-pink-300">
+                                        <i class="fab fa-google"></i>
+                                    </div>
+                                    <span class="text-sm font-medium text-gray-300">Safe Browsing</span>
+                                </div>
+                                <p
+                                    class="text-xl font-semibold {{ 'text-green-400' if advanced_results.safe_browsing_status == 'clean' else 'text-red-400' }}">
+                                    {{ 'Clean' if advanced_results.safe_browsing_status == 'clean' else 'Flagged' }}
+                                </p>
+                                <p class="text-xs text-gray-400 mt-1">Google Database Check</p>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                    </div>
                 </div>
                 {% endif %}
-            </div>
-        </main>
 
-        <footer>
-            <p>Powered by Machine Learning | Antigravity Hosting</p>
-        </footer>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-6 text-center border-t border-white/10 text-sm text-gray-400">
+                <p>&copy; 2026 Antigravity Hosting. All rights reserved.</p>
+            </div>
+        </div>
     </div>
+
 </body>
 
 </html>

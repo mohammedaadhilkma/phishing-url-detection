@@ -120,7 +120,7 @@ def home():
         else:
             error_message = "Model not loaded. Please contact administrator."
 
-    return render_template('index.html', prediction_text=prediction_text, url=url_input, error_message=error_message)
+    return render_template('index.html', prediction_text=prediction_text, url=url_input, error_message=error_message, result_class=result_class)
 
 if __name__ == "__main__":
     app.run(debug=True)
