@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing URL Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ PhishGuard</h1>
+            <p>Advanced AI-Powered Phishing Detection</p>
+        </header>
+
+        <main>
+            <div class="glass-panel">
+                <form action="/" method="POST">
+                    <div class="input-group">
+                        <input type="text" name="url" placeholder="Enter URL to analyze (e.g., http://example.com)"
+                            required value="{{ url if url else '' }}">
+                        <button type="submit">Analyze</button>
+                    </div>
+                </form>
+
+                {% if error_message %}
+                <div class="result error">
+                    <p>{{ error_message }}</p>
+                </div>
+                {% endif %}
+
+                {% if prediction_text %}
+                <div class="result {{ result_class }}">
+                    <h2>{{ prediction_text }}</h2>
+                    {% if confidence %}
+                    <p>Confidence Score: <strong>{{ confidence }}%</strong></p>
+                    <div class="progress-bar">
+                        <div class="progress" style="width: {{ confidence if confidence else 0 }}%;"></div>
+                    </div>
+                    {% endif %}
+
+                    {% if advanced_results %}
+                    <div class="advanced-details">
+                        <h3>Detailed Analysis</h3>
+                        <ul>
+                            <li><strong>Domain Age:</strong> {{ advanced_results.domain_age_days }} days (Risk: {{
+                                advanced_results.age_risk }})</li>
+                            <li><strong>SSL Status:</strong> {{ 'Valid' if advanced_results.ssl_valid else 'Invalid' }}
+                                (Expires: {{ advanced_results.ssl_expiry }})</li>
+                            <li><strong>Google Safe Browsing:</strong> {{ advanced_results.safe_browsing_status }}</li>
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <p class="url-checked">URL: {{ url }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </main>
+
+        <footer>
+            <p>Powered by Machine Learning | Antigravity Hosting</p>
+        </footer>
+    </div>
+</body>
+
+</html>
